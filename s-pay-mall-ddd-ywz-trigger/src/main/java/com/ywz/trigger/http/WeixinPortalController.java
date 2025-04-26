@@ -1,6 +1,7 @@
 package com.ywz.trigger.http;
 
 
+import com.ywz.domain.auth.service.ILoginService;
 import com.ywz.types.sdk.weixin.MessageTextEntity;
 import com.ywz.types.sdk.weixin.SignatureUtil;
 import com.ywz.types.sdk.weixin.XmlUtil;
@@ -29,8 +30,8 @@ public class WeixinPortalController {
     @Value("${weixin.config.token}")
     private String token;
 
-//    @Resource(name = "ILoginServiceImpl")
-//    private ILoginService loginService;
+    @Resource
+    private ILoginService loginService;
     @Autowired
     private HttpServletRequest httpServletRequest;
 
@@ -70,8 +71,8 @@ public class WeixinPortalController {
             // 消息转换
             MessageTextEntity message = XmlUtil.xmlToBean(requestBody, MessageTextEntity.class);
             if("event".equals(message.getMsgType())&&"SCAN".equals(message.getEvent())){
-//                loginService.saveLoginState(message.getTicket(), openid, request);
-//                return null;
+                loginService.saveLoginState(message.getTicket(), openid, request);
+                return null;
             }
 
             if(message.getContent().equals("于汶泽")){

@@ -1,0 +1,1 @@
+package com.ywz.domain.auth.adapter.repository;
