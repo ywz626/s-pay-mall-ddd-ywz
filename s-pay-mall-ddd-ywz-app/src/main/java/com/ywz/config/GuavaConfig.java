@@ -2,6 +2,7 @@ package com.ywz.config;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.google.common.eventbus.EventBus;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -10,11 +11,25 @@ import java.util.concurrent.TimeUnit;
 @Configuration
 public class GuavaConfig {
 
-    @Bean(name = "cache")
-    public Cache<String, String> cache() {
+    @Bean(name = "weixinAccessToken")
+    public Cache<String, String> weixinAccessToken() {
         return CacheBuilder.newBuilder()
-                .expireAfterWrite(3, TimeUnit.SECONDS)
+                .expireAfterWrite(2, TimeUnit.HOURS)
                 .build();
     }
+
+    @Bean(name = "openidToken")
+    public Cache<String, String> openidToken() {
+        return CacheBuilder.newBuilder()
+                .expireAfterWrite(1, TimeUnit.HOURS)
+                .build();
+    }
+
+//    @Bean
+//    public EventBus eventBusListener(OrderPaySuccessListener orderPaySuccessListener) {
+//        EventBus eventBus = new EventBus();
+//        eventBus.register(orderPaySuccessListener);
+//        return eventBus;
+//    }
 
 }

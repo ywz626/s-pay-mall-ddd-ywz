@@ -1,5 +1,5 @@
 server:
-  port: 8091
+  port: 8080
 
 # 线程池配置
 thread:
@@ -12,12 +12,21 @@ thread:
         block-queue-size: 5000
         policy: CallerRunsPolicy
 
+# 微信公众号配置
+weixin:
+  config:
+    originalid: gh_4bd1f55836b4
+    token: ywztest
+    app-id: wx23221df21e5a3e8f
+    app-secret: 89bba8e10bf06cbbd8d5f43438020016
+    template_id: 7sjKAMeJFZYILdqotAM5nv8mO_MF2cIY3kyQyMC7ztk
+
 # 数据库配置；启动时配置数据库资源信息
 spring:
   datasource:
     username: root
     password: 123456
-    url: jdbc:mysql://127.0.0.1:3306/xfg_frame_archetype?useUnicode=true&characterEncoding=utf8&autoReconnect=true&zeroDateTimeBehavior=convertToNull&serverTimezone=UTC&useSSL=true
+    url: jdbc:mysql://47.94.214.84:3306/s-pay-mall?useUnicode=true&characterEncoding=utf8&autoReconnect=true&zeroDateTimeBehavior=convertToNull&serverTimezone=UTC&useSSL=true
     driver-class-name: com.mysql.cj.jdbc.Driver
   hikari:
     pool-name: Retail_HikariCP
