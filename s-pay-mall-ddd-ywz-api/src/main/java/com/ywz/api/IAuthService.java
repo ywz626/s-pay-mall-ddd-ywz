@@ -7,7 +7,7 @@ import com.ywz.api.response.Response;
  */
 public interface IAuthService {
 
-    public Response<String> weixinQrCodeTicket();
+    Response<String> weixinQrCodeTicket();
 
-    public Response<String> checkLogin(String ticket);
+    Response<String> checkLogin(String ticket);
 }

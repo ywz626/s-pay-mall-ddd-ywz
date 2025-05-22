@@ -7,8 +7,10 @@ import com.ywz.infrastructure.gateway.dto.WeixinQrCodeRequestDTO;
 import com.ywz.infrastructure.gateway.dto.WeixinQrCodeResponseDTO;
 import com.ywz.infrastructure.gateway.dto.WeixinTemplateMessageDTO;
 import com.ywz.infrastructure.gateway.dto.WeixinTokenResponseDTO;
+import com.ywz.types.common.RedisConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import retrofit2.Call;
 
@@ -35,20 +37,24 @@ public class LoginPort implements ILoginPort {
     private Cache<String, String> weixinAccessToken;
     @Resource
     private IWeixinApiService weixinApiService;
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
 
     public LoginPort() throws IOException {
     }
 
     @Override
     public String createQrCodeTicket() throws Exception {
-        String tocken = weixinAccessToken.getIfPresent(appid);
+//        String tocken = weixinAccessToken.getIfPresent(appid);
+        String tocken = stringRedisTemplate.opsForValue().get(RedisConstants.WEIXIN_ACCESS_TOKEN + appid);
         if (tocken == null) {
             Call<WeixinTokenResponseDTO> call = weixinApiService.getAccessToken("client_credential", appid, appSecret);
             WeixinTokenResponseDTO weixinTokenRes = call.execute().body();
             assert weixinTokenRes != null;
             tocken = weixinTokenRes.getAccess_token();
             log.info("tocken:{}", tocken);
-            weixinAccessToken.put(appid, tocken);
+//            weixinAccessToken.put(appid, tocken);
+            stringRedisTemplate.opsForValue().set(RedisConstants.WEIXIN_ACCESS_TOKEN + appid, tocken);
         }
 
 
@@ -70,13 +76,13 @@ public class LoginPort implements ILoginPort {
     @Override
     public void sendLoginTemplate(String openid) throws IOException {
 // 1. 获取 accessToken 【实际业务场景，按需处理下异常】
-        String accessToken = weixinAccessToken.getIfPresent(appid);
+        String accessToken = stringRedisTemplate.opsForValue().get(RedisConstants.WEIXIN_ACCESS_TOKEN + appid);
         if (null == accessToken){
             Call<WeixinTokenResponseDTO> call = weixinApiService.getAccessToken("client_credential", appid, appSecret);
             WeixinTokenResponseDTO weixinTokenResponseDTO = call.execute().body();
             assert weixinTokenResponseDTO != null;
             accessToken = weixinTokenResponseDTO.getAccess_token();
-            weixinAccessToken.put(appid, accessToken);
+            stringRedisTemplate.opsForValue().set(RedisConstants.WEIXIN_ACCESS_TOKEN + appid, accessToken);
         }
 
         // 2. 发送模板消息
